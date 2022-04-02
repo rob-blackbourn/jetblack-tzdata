@@ -1,0 +1,16 @@
+{
+  "name": "@jetblack/tzdata",
+  "private": false,
+  "version": "0.2.0",
+  "description": "Timezone data",
+  "keywords": [
+    "timezone"
+  ],
+  "repository": "git@github.com:rob-blackbourn/jetblack-tzdata.git",
+  "homepage": "https://github.com/rob-blackbourn/jetblack-tzdata",
+  "author": "Rob Blackbourn <rob.blackbourn@gmail.com>",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ]
+}

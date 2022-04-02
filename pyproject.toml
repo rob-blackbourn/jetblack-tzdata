@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "jetblack-tzdata"
+version = "0.1.0"
+description = "A builder for timezone data"
+authors = ["Rob Blackbourn <rob.blackbourn@gmail.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+packages = [
+    { include = "jetblack_tzdata" }
+]
+repository = "https://github.com/rob-blackbourn/jetblack-tzdata"
+
+[tool.poetry.scripts]
+build-tzdata = "jetblack_tzdata.entrypoints.build:main"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+jetblack-iso8601 = "^1.0.1"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.910"
+pylint = "^2.7"
+autopep8 = "^1.5.4"
+pytest = "^6.1.1"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
