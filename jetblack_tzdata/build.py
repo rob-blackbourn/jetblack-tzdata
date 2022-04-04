@@ -1,7 +1,9 @@
 """The main builder"""
 
 import argparse
+from ensurepip import version
 import logging
+from pathlib import Path
 from typing import List
 
 from .collector import collect
@@ -13,6 +15,30 @@ from .packager import make_package
 
 def _parse_args(args):
     parser = argparse.ArgumentParser("Build tzdata")
+
+    parser.add_argument(
+        '-t', '--temp-dir',
+        help='The temporary build folder',
+        action='store',
+        dest='temp_dir',
+        default='temp'
+    )
+
+    parser.add_argument(
+        '-i', '--iana-version',
+        help='The version of the IANA tzdata',
+        action='store',
+        dest='version',
+        default='latest'
+    )
+
+    parser.add_argument(
+        '-u', '--tzdata_url',
+        help='The URL to use to fetch the tzdata',
+        action='store',
+        dest='tzdata_url',
+        default='ftp://ftp.iana.org/tz/tzdata-latest.tar.gz'
+    )
 
     # parser.add_argument(
     #     '-i', '--input-file',
@@ -56,8 +82,26 @@ def build_tzdata(argv: List[str]):
     if args.is_verbose:
         logging.basicConfig(level=logging.DEBUG)
 
-    # download_data()
-    # compile_files()
-    # dump_files()
-    # collect()
-    make_package()
+    temp_folder = Path(args.temp_dir)
+
+    download_data(
+        temp_folder,
+        args.tzdata_url,
+        args.version
+    )
+    compile_files(
+        temp_folder,
+        args.version
+    )
+    dump_files(
+        temp_folder,
+        args.version
+    )
+    collect(
+        temp_folder,
+        args.version
+    )
+    make_package(
+        temp_folder,
+        args.version
+    )
