@@ -1,7 +1,6 @@
 """The main builder"""
 
 import argparse
-from ensurepip import version
 import logging
 from pathlib import Path
 from typing import List
@@ -40,31 +39,6 @@ def _parse_args(args):
         default='ftp://ftp.iana.org/tz/tzdata-latest.tar.gz'
     )
 
-    # parser.add_argument(
-    #     '-i', '--input-file',
-    #     help='Input filename',
-    #     action='store',
-    #     dest='input_filename'
-    # )
-
-    # parser.add_argument(
-    #     '-o', '--output-path',
-    #     help='Output folder or file',
-    #     action='store',
-    #     dest='output_path',
-    #     default='.')
-    # parser.add_argument(
-    #     '-t', '--ticker',
-    #     help='Add a ticker to record',
-    #     action='append',
-    #     dest='tickers',
-    #     default=[])
-    # parser.add_argument(
-    #     '-s', '--silent',
-    #     help='Suppress progress report',
-    #     action='store_true',
-    #     dest='is_silent',
-    #     default=False)
     parser.add_argument(
         '-v', '--verbose',
         help='Verbose',
@@ -87,21 +61,26 @@ def build_tzdata(argv: List[str]):
     download_data(
         temp_folder,
         args.tzdata_url,
-        args.version
+        args.version,
+        args.is_verbose
     )
     compile_files(
         temp_folder,
-        args.version
+        args.version,
+        args.is_verbose
     )
     dump_files(
         temp_folder,
-        args.version
+        args.version,
+        args.is_verbose
     )
     collect(
         temp_folder,
-        args.version
+        args.version,
+        args.is_verbose
     )
     make_package(
         temp_folder,
-        args.version
+        args.version,
+        args.is_verbose
     )

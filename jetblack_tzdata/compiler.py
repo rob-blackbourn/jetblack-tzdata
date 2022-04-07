@@ -5,9 +5,13 @@ import subprocess
 
 
 def compile_files(
-        temp_folder: Path = Path("temp"),
-        version: str = 'latest'
+        temp_folder: Path,
+        version: str,
+        is_verbose: bool
 ) -> None:
+    if is_verbose:
+        print("Compiling files")
+
     download_folder = (temp_folder / 'download' / version).resolve()
 
     output_folder = (temp_folder / 'zic' / version).resolve()
@@ -29,7 +33,9 @@ def compile_files(
     for file_name in file_names:
         download_file = download_folder / file_name
 
-        subprocess.run(
-            ["zic", "-d", str(output_folder), str(download_file)],
-            check=True,
-        )
+        args = ["zic", "-d", str(output_folder), str(download_file)]
+
+        if is_verbose:
+            print(f"Executing: {args}")
+
+        subprocess.run(args, check=True)

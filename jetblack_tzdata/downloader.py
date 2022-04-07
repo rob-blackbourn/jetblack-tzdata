@@ -4,10 +4,35 @@ from pathlib import Path
 import subprocess
 
 
+def _download_file(tzdata_url: str, curl_file: Path, is_verbose: bool) -> None:
+    args = ["curl", tzdata_url, "-o", str(curl_file)]
+
+    if is_verbose:
+        print(f"Executing: {' '.join(args)}")
+
+    subprocess.run(
+        args,
+        check=True
+    )
+
+
+def _unpack_file(curl_file: Path, dest_folder: Path, is_verbose: bool) -> None:
+    args = ["tar", "xf", str(curl_file), "-C", str(dest_folder)]
+
+    if is_verbose:
+        print(f"Executing: {' '.join(args)}")
+
+    subprocess.run(
+        args,
+        check=True
+    )
+
+
 def download_data(
-    temp_folder: Path = Path("temp"),
-    tzdata_url: str = 'ftp://ftp.iana.org/tz/tzdata-latest.tar.gz',
-    version: str = 'latest'
+    temp_folder: Path,
+    tzdata_url: str,
+    version: str,
+    is_verbose: bool
 ) -> None:
     if not temp_folder.exists():
         temp_folder.mkdir(parents=True, exist_ok=True)
@@ -17,17 +42,10 @@ def download_data(
         curl_folder.mkdir(parents=True, exist_ok=True)
 
     curl_file = curl_folder / 'data.tar.gz'
-
-    subprocess.run(
-        ["curl", tzdata_url, "-o", str(curl_file)],
-        check=True
-    )
+    _download_file(tzdata_url, curl_file, is_verbose)
 
     dest_folder = temp_folder / 'download' / version
     if not dest_folder.exists():
         dest_folder.mkdir(parents=True, exist_ok=True)
 
-    subprocess.run(
-        ["tar", "xf", str(curl_file), "-C", str(dest_folder)],
-        check=True
-    )
+    _unpack_file(curl_file, dest_folder, is_verbose)

@@ -25,7 +25,13 @@ class JSONEncoderEx(json.JSONEncoder):
 DATE_FORMAT = "%b %d %H:%M:%S %Y"
 
 
-def _collect_file(zdump_file: Path) -> Tuple[str, List[TimezoneDelta]]:
+def _collect_file(
+    zdump_file: Path,
+    is_verbose: bool
+) -> Tuple[str, List[TimezoneDelta]]:
+    if is_verbose:
+        print(f"Collecting file: {zdump_file}")
+
     name: Optional[str] = None
     payload: List[TimezoneDelta] = []
     with open(zdump_file, "rt", encoding="utf-8") as fp:
@@ -70,24 +76,32 @@ def _collect_file(zdump_file: Path) -> Tuple[str, List[TimezoneDelta]]:
 
 def _collect_folder(
         zdump_folder: Path,
-        results: Dict[str, List[TimezoneDelta]]
+        results: Dict[str, List[TimezoneDelta]],
+        is_verbose: bool,
 ) -> None:
+
+    if is_verbose:
+        print(f"Collecting files in folder: {zdump_folder}")
 
     for path in zdump_folder.iterdir():
 
         if path.is_dir():
-            _collect_folder(path, results)
+            _collect_folder(path, results, is_verbose)
         else:
-            name, values = _collect_file(path)
+            name, values = _collect_file(path, is_verbose)
             if name in results:
                 raise KeyError('Duplicate')
             results[name] = values
 
 
 def collect(
-        temp_folder: Path = Path("temp"),
-        version: str = 'latest'
+        temp_folder: Path,
+        version: str,
+        is_verbose: bool
 ) -> None:
+    if is_verbose:
+        print("Collecting data")
+
     zdump_folder = temp_folder / "zdump" / version
     collect_folder = temp_folder / "collect" / version
     if not collect_folder.exists():
@@ -95,7 +109,7 @@ def collect(
 
     results: Dict[str, List[TimezoneDelta]] = {}
 
-    _collect_folder(zdump_folder, results)
+    _collect_folder(zdump_folder, results, is_verbose)
 
     collect_file = collect_folder / 'tzdata.json'
 

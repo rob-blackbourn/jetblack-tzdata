@@ -5,9 +5,13 @@ from pathlib import Path
 
 
 def make_package(
-        temp_folder: Path = Path("temp"),
-        version: str = 'latest'
+        temp_folder: Path,
+        version: str,
+        is_verbose: bool
 ) -> None:
+    if is_verbose:
+        print("Making package")
+
     collect_file = temp_folder / "collect" / version / 'tzdata.json'
     package_folder = Path("package") / "dist" / version
     if not package_folder.exists():
