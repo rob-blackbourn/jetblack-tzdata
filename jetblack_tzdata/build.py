@@ -26,9 +26,8 @@ def _parse_args(args):
     parser.add_argument(
         '-i', '--iana-version',
         help='The version of the IANA tzdata',
-        action='store',
-        dest='version',
-        default='latest'
+        action='append',
+        dest='versions'
     )
 
     parser.add_argument(
@@ -69,31 +68,31 @@ def build_tzdata(argv: List[str]):
     download_data(
         temp_folder,
         args.tzdata_url,
-        args.version,
+        args.versions,
         args.is_overwriting,
         args.is_verbose
     )
     compile_files(
         temp_folder,
-        args.version,
+        args.versions,
         args.is_overwriting,
         args.is_verbose
     )
     dump_files(
         temp_folder,
-        args.version,
+        args.versions,
         args.is_overwriting,
         args.is_verbose
     )
     collect(
         temp_folder,
-        args.version,
+        args.versions,
         args.is_overwriting,
         args.is_verbose
     )
     make_package(
         temp_folder,
-        args.version,
+        args.versions,
         args.is_overwriting,
         args.is_verbose
     )

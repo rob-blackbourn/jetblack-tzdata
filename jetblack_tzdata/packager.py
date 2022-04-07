@@ -3,9 +3,10 @@
 import json
 import subprocess
 from pathlib import Path
+from typing import List
 
 
-def make_package(
+def _make_package_version(
         temp_folder: Path,
         version: str,
         is_overwriting: bool,
@@ -48,3 +49,18 @@ def make_package(
     zones_file = package_folder / 'zones.json'
     with open(zones_file, "wt", encoding="utf-8") as fp:
         json.dump(zones, fp, indent=2)
+
+
+def make_package(
+        temp_folder: Path,
+        versions: List[str],
+        is_overwriting: bool,
+        is_verbose: bool
+) -> None:
+    for version in versions:
+        _make_package_version(
+            temp_folder,
+            version,
+            is_overwriting,
+            is_verbose
+        )

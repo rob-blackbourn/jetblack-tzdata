@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import subprocess
+from typing import List
 
 
 def _dump_file(
@@ -75,7 +76,7 @@ def _dump_folder(
             )
 
 
-def dump_files(
+def _dump_version(
         temp_folder: Path,
         version: str,
         is_overwriting: bool,
@@ -98,3 +99,13 @@ def dump_files(
         return
 
     _dump_folder(zic_folder, zic_folder, zdump_folder, is_verbose)
+
+
+def dump_files(
+        temp_folder: Path,
+        versions: List[str],
+        is_overwriting: bool,
+        is_verbose: bool
+) -> None:
+    for version in versions:
+        _dump_version(temp_folder, version, is_overwriting, is_verbose)

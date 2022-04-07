@@ -5,7 +5,6 @@ import json
 from pathlib import Path
 import re
 import subprocess
-from tabnanny import check
 from typing import Dict, List, Optional, Tuple
 
 from jetblack_iso8601 import datetime_to_iso8601, timedelta_to_iso8601
@@ -96,15 +95,12 @@ def _collect_folder(
             results[name] = values
 
 
-def collect(
+def _collect_version(
         temp_folder: Path,
         version: str,
         is_overwriting: bool,
         is_verbose: bool
 ) -> None:
-    if is_verbose:
-        print("Collecting data")
-
     zdump_folder = temp_folder / "zdump" / version
     collect_folder = temp_folder / "collect" / version
     if not collect_folder.exists():
@@ -125,3 +121,16 @@ def collect(
 
     with open(collect_file, "wt", encoding='utf-8') as fp:
         json.dump(results, fp, indent=2, cls=JSONEncoderEx)
+
+
+def collect(
+        temp_folder: Path,
+        versions: List[str],
+        is_overwriting: bool,
+        is_verbose: bool
+) -> None:
+    if is_verbose:
+        print("Collecting data")
+
+    for version in versions:
+        _collect_version(temp_folder, version, is_overwriting, is_verbose)

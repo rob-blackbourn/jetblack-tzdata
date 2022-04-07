@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import subprocess
+from typing import List
 
 
 def _download_file(tzdata_url: str, curl_file: Path, is_verbose: bool) -> None:
@@ -28,26 +29,24 @@ def _unpack_file(curl_file: Path, dest_folder: Path, is_verbose: bool) -> None:
     )
 
 
-def download_data(
+def _download_version(
         temp_folder: Path,
         tzdata_url: str,
         version: str,
         is_overwriting: bool,
         is_verbose: bool
 ) -> None:
-    if not temp_folder.exists():
-        temp_folder.mkdir(parents=True, exist_ok=True)
+    curl_folder = temp_folder / 'curl' / version
+
+    if not curl_folder.exists():
+        curl_folder.mkdir(parents=True, exist_ok=True)
     elif is_overwriting:
         subprocess.run(
-            ['rm', '-r', str(temp_folder)],
+            ['rm', '-r', str(curl_folder)],
             check=True
         )
     else:
         return
-
-    curl_folder = temp_folder / 'curl' / version
-    if not curl_folder.exists():
-        curl_folder.mkdir(parents=True, exist_ok=True)
 
     curl_file = curl_folder / 'data.tar.gz'
     _download_file(tzdata_url, curl_file, is_verbose)
@@ -57,3 +56,20 @@ def download_data(
         dest_folder.mkdir(parents=True, exist_ok=True)
 
     _unpack_file(curl_file, dest_folder, is_verbose)
+
+
+def download_data(
+        temp_folder: Path,
+        tzdata_url: str,
+        versions: List[str],
+        is_overwriting: bool,
+        is_verbose: bool
+) -> None:
+    for version in versions:
+        _download_version(
+            temp_folder,
+            tzdata_url,
+            version,
+            is_overwriting,
+            is_verbose
+        )

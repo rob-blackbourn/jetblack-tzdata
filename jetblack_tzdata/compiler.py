@@ -2,9 +2,10 @@
 
 from pathlib import Path
 import subprocess
+from typing import List
 
 
-def compile_files(
+def _compile_version(
         temp_folder: Path,
         version: str,
         is_overwriting: bool,
@@ -47,3 +48,13 @@ def compile_files(
             print(f"Executing: {args}")
 
         subprocess.run(args, check=True)
+
+
+def compile_files(
+        temp_folder: Path,
+        versions: List[str],
+        is_overwriting: bool,
+        is_verbose: bool
+) -> None:
+    for version in versions:
+        _compile_version(temp_folder, version, is_overwriting, is_verbose)
