@@ -1,12 +1,14 @@
 """Make the npm package"""
 
 import json
+import subprocess
 from pathlib import Path
 
 
 def make_package(
         temp_folder: Path,
         version: str,
+        is_overwriting: bool,
         is_verbose: bool
 ) -> None:
     if is_verbose:
@@ -16,6 +18,13 @@ def make_package(
     package_folder = Path("package") / "dist" / version
     if not package_folder.exists():
         package_folder.mkdir(parents=True, exist_ok=True)
+    elif is_overwriting:
+        subprocess.run(
+            ['rm', '-r', str(package_folder)],
+            check=True
+        )
+    else:
+        return
 
     with open(collect_file, "rt", encoding='utf-8') as fp:
         tzdata = json.load(fp)

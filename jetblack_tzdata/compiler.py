@@ -7,6 +7,7 @@ import subprocess
 def compile_files(
         temp_folder: Path,
         version: str,
+        is_overwriting: bool,
         is_verbose: bool
 ) -> None:
     if is_verbose:
@@ -17,6 +18,13 @@ def compile_files(
     output_folder = (temp_folder / 'zic' / version).resolve()
     if not output_folder.exists():
         output_folder.mkdir(parents=True, exist_ok=True)
+    elif is_overwriting:
+        subprocess.run(
+            ['rm', '-r', str(output_folder)],
+            check=True
+        )
+    else:
+        return
 
     file_names = [
         'africa',

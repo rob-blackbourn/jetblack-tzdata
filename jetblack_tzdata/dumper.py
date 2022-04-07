@@ -78,6 +78,7 @@ def _dump_folder(
 def dump_files(
         temp_folder: Path,
         version: str,
+        is_overwriting: bool,
         is_verbose: bool
 ) -> None:
     if is_verbose:
@@ -85,5 +86,15 @@ def dump_files(
 
     zic_folder = (temp_folder / "zic" / version).resolve()
     zdump_folder = (temp_folder / "zdump" / version).resolve()
+
+    if not zdump_folder.exists():
+        zdump_folder.mkdir(parents=True, exist_ok=True)
+    elif is_overwriting:
+        subprocess.run(
+            ['rm', '-r', str(zdump_folder)],
+            check=True
+        )
+    else:
+        return
 
     _dump_folder(zic_folder, zic_folder, zdump_folder, is_verbose)

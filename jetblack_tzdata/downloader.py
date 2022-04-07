@@ -29,13 +29,21 @@ def _unpack_file(curl_file: Path, dest_folder: Path, is_verbose: bool) -> None:
 
 
 def download_data(
-    temp_folder: Path,
-    tzdata_url: str,
-    version: str,
-    is_verbose: bool
+        temp_folder: Path,
+        tzdata_url: str,
+        version: str,
+        is_overwriting: bool,
+        is_verbose: bool
 ) -> None:
     if not temp_folder.exists():
         temp_folder.mkdir(parents=True, exist_ok=True)
+    elif is_overwriting:
+        subprocess.run(
+            ['rm', '-r', str(temp_folder)],
+            check=True
+        )
+    else:
+        return
 
     curl_folder = temp_folder / 'curl' / version
     if not curl_folder.exists():

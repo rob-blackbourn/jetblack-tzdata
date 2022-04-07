@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 import json
 from pathlib import Path
 import re
+import subprocess
+from tabnanny import check
 from typing import Dict, List, Optional, Tuple
 
 from jetblack_iso8601 import datetime_to_iso8601, timedelta_to_iso8601
@@ -97,6 +99,7 @@ def _collect_folder(
 def collect(
         temp_folder: Path,
         version: str,
+        is_overwriting: bool,
         is_verbose: bool
 ) -> None:
     if is_verbose:
@@ -106,6 +109,13 @@ def collect(
     collect_folder = temp_folder / "collect" / version
     if not collect_folder.exists():
         collect_folder.mkdir(parents=True, exist_ok=True)
+    elif is_overwriting:
+        subprocess.run(
+            ['rm', '-r', str(collect_folder)],
+            check=True
+        )
+    else:
+        return
 
     results: Dict[str, List[TimezoneDelta]] = {}
 

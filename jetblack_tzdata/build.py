@@ -40,6 +40,14 @@ def _parse_args(args):
     )
 
     parser.add_argument(
+        '-o', '--overwrite',
+        help='Overwrite',
+        action='store_true',
+        dest='is_overwriting',
+        default=False
+    )
+
+    parser.add_argument(
         '-v', '--verbose',
         help='Verbose',
         action='store_true',
@@ -62,25 +70,30 @@ def build_tzdata(argv: List[str]):
         temp_folder,
         args.tzdata_url,
         args.version,
+        args.is_overwriting,
         args.is_verbose
     )
     compile_files(
         temp_folder,
         args.version,
+        args.is_overwriting,
         args.is_verbose
     )
     dump_files(
         temp_folder,
         args.version,
+        args.is_overwriting,
         args.is_verbose
     )
     collect(
         temp_folder,
         args.version,
+        args.is_overwriting,
         args.is_verbose
     )
     make_package(
         temp_folder,
         args.version,
+        args.is_overwriting,
         args.is_verbose
     )
