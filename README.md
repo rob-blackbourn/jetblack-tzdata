@@ -31,7 +31,7 @@ be published to npmjs.
 
 Note: The version in `package/package.json` must be updated manually.
 
-````bash
+```bash
 python3 -m venv .venv
 . .venv/bin/activate
 poetry install
