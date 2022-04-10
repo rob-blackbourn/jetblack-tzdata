@@ -35,7 +35,7 @@ following format.
 
 ### Minified format
 
-Each line in the minified format has the following format.
+Each line of minified data has the following format.
 
 * u (number): The time in milliseconds since 1 Jan 1970 in UTC from which the offset applies,
 * o (number): The offset in minutes,
