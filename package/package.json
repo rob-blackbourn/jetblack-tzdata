@@ -4,7 +4,12 @@
   "version": "0.6.0",
   "description": "Timezone data",
   "keywords": [
-    "timezone"
+    "timezone",
+    "iana",
+    "tzdata",
+    "tz",
+    "date",
+    "dates"
   ],
   "repository": "git@github.com:rob-blackbourn/jetblack-tzdata.git",
   "homepage": "https://github.com/rob-blackbourn/jetblack-tzdata",
