@@ -69,30 +69,25 @@ def build_tzdata(argv: List[str]):
         temp_folder,
         args.tzdata_url,
         args.versions,
-        args.is_overwriting,
-        args.is_verbose
+        args.is_overwriting
     )
     compile_files(
         temp_folder,
         args.versions,
-        args.is_overwriting,
-        args.is_verbose
+        args.is_overwriting
     )
     dump_files(
         temp_folder,
         args.versions,
-        args.is_overwriting,
-        args.is_verbose
+        args.is_overwriting
     )
     collect(
         temp_folder,
         args.versions,
-        args.is_overwriting,
-        args.is_verbose
+        args.is_overwriting
     )
     make_package(
         temp_folder,
         args.versions,
-        args.is_overwriting,
-        args.is_verbose
+        args.is_overwriting
     )

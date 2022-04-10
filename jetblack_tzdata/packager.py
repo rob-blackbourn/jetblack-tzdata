@@ -1,25 +1,25 @@
 """Make the npm package"""
 
 import json
+import logging
 import subprocess
 from pathlib import Path
 from typing import List
+
+LOGGER = logging.getLogger(__name__)
 
 
 def _make_package_version(
         temp_folder: Path,
         version: str,
-        is_overwriting: bool,
-        is_verbose: bool
+        is_overwriting: bool
 ) -> None:
-    if is_verbose:
-        print("Making package")
+    LOGGER.info("Making package for version: %s", version)
 
     package_folder = Path("package") / "dist" / version
     if package_folder.exists():
         if is_overwriting:
-            if is_verbose:
-                print(f"Clearing folder: {package_folder}")
+            LOGGER.debug("Clearing folder: %s", package_folder)
             subprocess.run(
                 ['rm', '-r', str(package_folder)],
                 check=True
@@ -64,13 +64,11 @@ def _make_package_version(
 def make_package(
         temp_folder: Path,
         versions: List[str],
-        is_overwriting: bool,
-        is_verbose: bool
+        is_overwriting: bool
 ) -> None:
     for version in versions:
         _make_package_version(
             temp_folder,
             version,
-            is_overwriting,
-            is_verbose
+            is_overwriting
         )

@@ -1,26 +1,26 @@
 """Compile with zic"""
 
+import logging
 from pathlib import Path
 import subprocess
 from typing import List
+
+LOGGER = logging.getLogger(__name__)
 
 
 def _compile_version(
         temp_folder: Path,
         version: str,
-        is_overwriting: bool,
-        is_verbose: bool
+        is_overwriting: bool
 ) -> None:
-    if is_verbose:
-        print("Compiling files")
+    LOGGER.info("Compiling files for version: %s", version)
 
     download_folder = (temp_folder / 'download' / version).resolve()
 
     output_folder = (temp_folder / 'zic' / version).resolve()
     if output_folder.exists():
         if is_overwriting:
-            if is_verbose:
-                print(f"Clearing folder: {output_folder}")
+            LOGGER.debug("Clearing folder: %s", output_folder)
             subprocess.run(
                 ['rm', '-r', str(output_folder)],
                 check=True
@@ -46,8 +46,7 @@ def _compile_version(
 
         args = ["zic", "-d", str(output_folder), str(download_file)]
 
-        if is_verbose:
-            print(f"Executing: {args}")
+        LOGGER.debug("Executing: %s", args)
 
         subprocess.run(args, check=True)
 
@@ -55,8 +54,7 @@ def _compile_version(
 def compile_files(
         temp_folder: Path,
         versions: List[str],
-        is_overwriting: bool,
-        is_verbose: bool
+        is_overwriting: bool
 ) -> None:
     for version in versions:
-        _compile_version(temp_folder, version, is_overwriting, is_verbose)
+        _compile_version(temp_folder, version, is_overwriting)

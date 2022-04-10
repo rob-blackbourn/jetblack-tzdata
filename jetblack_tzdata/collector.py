@@ -2,6 +2,7 @@
 
 from datetime import datetime, timedelta
 import json
+import logging
 from pathlib import Path
 import re
 import subprocess
@@ -10,6 +11,8 @@ from typing import Dict, List, Optional, Tuple
 from jetblack_iso8601 import datetime_to_iso8601, timedelta_to_iso8601
 
 from .types import TimezoneDelta, MinTimezoneDelta
+
+LOGGER = logging.getLogger(__name__)
 
 
 class JSONEncoderEx(json.JSONEncoder):
@@ -27,11 +30,9 @@ DATE_FORMAT = "%b %d %H:%M:%S %Y"
 
 
 def _collect_file(
-    zdump_file: Path,
-    is_verbose: bool
+        zdump_file: Path
 ) -> Tuple[str, List[TimezoneDelta], List[MinTimezoneDelta]]:
-    if is_verbose:
-        print(f"Collecting file: {zdump_file}")
+    LOGGER.debug("Collecting file: %s", zdump_file)
 
     name: Optional[str] = None
     payload: List[TimezoneDelta] = []
@@ -88,19 +89,17 @@ def _collect_file(
 def _collect_folder(
         zdump_folder: Path,
         results: Dict[str, List[TimezoneDelta]],
-        min_results: Dict[str, List[MinTimezoneDelta]],
-        is_verbose: bool,
+        min_results: Dict[str, List[MinTimezoneDelta]]
 ) -> None:
 
-    if is_verbose:
-        print(f"Collecting files in folder: {zdump_folder}")
+    LOGGER.debug("Collecting files in folder: %s", zdump_folder)
 
     for path in zdump_folder.iterdir():
 
         if path.is_dir():
-            _collect_folder(path, results, min_results, is_verbose)
+            _collect_folder(path, results, min_results)
         else:
-            name, values, min_values = _collect_file(path, is_verbose)
+            name, values, min_values = _collect_file(path)
             if name in results:
                 raise KeyError('Duplicate')
             results[name] = values
@@ -110,16 +109,14 @@ def _collect_folder(
 def _collect_version(
         temp_folder: Path,
         version: str,
-        is_overwriting: bool,
-        is_verbose: bool
+        is_overwriting: bool
 ) -> None:
     zdump_folder = temp_folder / "zdump" / version
 
     collect_folder = temp_folder / "collect" / version
     if collect_folder.exists():
         if is_overwriting:
-            if is_verbose:
-                print(f"Clearing folder: {collect_folder}")
+            LOGGER.debug("Clearing folder: %s", collect_folder)
             subprocess.run(
                 ['rm', '-r', str(collect_folder)],
                 check=True
@@ -131,7 +128,7 @@ def _collect_version(
     results: Dict[str, List[TimezoneDelta]] = {}
     min_results: Dict[str, List[MinTimezoneDelta]] = {}
 
-    _collect_folder(zdump_folder, results, min_results, is_verbose)
+    _collect_folder(zdump_folder, results, min_results)
 
     collect_file = collect_folder / 'tzdata.json'
     min_collect_file = collect_folder / 'tzdata.min.json'
@@ -146,11 +143,9 @@ def _collect_version(
 def collect(
         temp_folder: Path,
         versions: List[str],
-        is_overwriting: bool,
-        is_verbose: bool
+        is_overwriting: bool
 ) -> None:
-    if is_verbose:
-        print("Collecting data")
+    LOGGER.info("Collecting data")
 
     for version in versions:
-        _collect_version(temp_folder, version, is_overwriting, is_verbose)
+        _collect_version(temp_folder, version, is_overwriting)

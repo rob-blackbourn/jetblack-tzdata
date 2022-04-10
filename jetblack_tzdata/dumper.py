@@ -1,23 +1,25 @@
 """Dump the compiled files"""
 
+import logging
 from pathlib import Path
 import subprocess
 from typing import List
+
+from jetblack_tzdata.downloader import LOGGER
+
+LOGGER = logging.getLogger(__name__)
 
 
 def _dump_file(
         zic_file: Path,
         zic_base_folder: Path,
-        zdump_folder: Path,
-        is_verbose: bool
+        zdump_folder: Path
 ) -> None:
-    if is_verbose:
-        print(f"Dumping file: {zic_file}")
+    LOGGER.debug("Dumping file: %s", zic_file)
 
     args = ["zdump", "-v", str(zic_file)]
 
-    if is_verbose:
-        print(f"Executing: {' '.join(args)}")
+    LOGGER.debug("Executing: %s", ' '.join(args))
 
     result = subprocess.run(
         args,
@@ -29,8 +31,7 @@ def _dump_file(
     if not result.stdout:
         args = ["zdump", "UTC", str(zic_file)]
 
-        if is_verbose:
-            print(f"Executing: {' '.join(args)}")
+        LOGGER.debug("Executing: %s", ' '.join(args))
 
         result = subprocess.run(
             ["zdump", "UTC", str(zic_file)],
@@ -49,11 +50,9 @@ def _dump_file(
 def _dump_folder(
         zic_folder: Path,
         zic_base_folder: Path,
-        zdump_folder: Path,
-        is_verbose: bool
+        zdump_folder: Path
 ) -> None:
-    if is_verbose:
-        print(f"Dumping folder: {zic_folder}")
+    LOGGER.debug("Dumping folder: %s", zic_folder)
 
     if not zdump_folder.exists():
         zdump_folder.mkdir(parents=True, exist_ok=True)
@@ -64,15 +63,13 @@ def _dump_folder(
             _dump_folder(
                 path,
                 zic_base_folder,
-                zdump_folder / path.name,
-                is_verbose
+                zdump_folder / path.name
             )
         else:
             _dump_file(
                 path,
                 zic_base_folder,
-                zdump_folder,
-                is_verbose
+                zdump_folder
             )
 
 
@@ -80,18 +77,15 @@ def _dump_version(
         temp_folder: Path,
         version: str,
         is_overwriting: bool,
-        is_verbose: bool
 ) -> None:
-    if is_verbose:
-        print("Dumping files")
+    LOGGER.info("Dumping files for version: %s", version)
 
     zic_folder = (temp_folder / "zic" / version).resolve()
     zdump_folder = (temp_folder / "zdump" / version).resolve()
 
     if zdump_folder.exists():
         if is_overwriting:
-            if is_verbose:
-                print(f"Clearing folder {zdump_folder}")
+            LOGGER.debug("Clearing folder %s", zdump_folder)
             subprocess.run(
                 ['rm', '-r', str(zdump_folder)],
                 check=True
@@ -100,14 +94,13 @@ def _dump_version(
             return
     zdump_folder.mkdir(parents=True, exist_ok=True)
 
-    _dump_folder(zic_folder, zic_folder, zdump_folder, is_verbose)
+    _dump_folder(zic_folder, zic_folder, zdump_folder)
 
 
 def dump_files(
         temp_folder: Path,
         versions: List[str],
-        is_overwriting: bool,
-        is_verbose: bool
+        is_overwriting: bool
 ) -> None:
     for version in versions:
-        _dump_version(temp_folder, version, is_overwriting, is_verbose)
+        _dump_version(temp_folder, version, is_overwriting)
