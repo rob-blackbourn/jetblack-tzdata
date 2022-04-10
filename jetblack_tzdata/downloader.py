@@ -38,22 +38,33 @@ def _download_version(
 ) -> None:
     curl_folder = temp_folder / 'curl' / version
 
-    if not curl_folder.exists():
-        curl_folder.mkdir(parents=True, exist_ok=True)
-    elif is_overwriting:
-        subprocess.run(
-            ['rm', '-r', str(curl_folder)],
-            check=True
-        )
-    else:
-        return
+    if curl_folder.exists():
+        if is_overwriting:
+            if is_verbose:
+                print(f"Clearing folder: {curl_folder}")
+            subprocess.run(
+                ['rm', '-r', str(curl_folder)],
+                check=True
+            )
+        else:
+            return
+    curl_folder.mkdir(parents=True, exist_ok=True)
 
     curl_file = curl_folder / 'data.tar.gz'
     _download_file(tzdata_url, curl_file, is_verbose)
 
     dest_folder = temp_folder / 'download' / version
-    if not dest_folder.exists():
-        dest_folder.mkdir(parents=True, exist_ok=True)
+    if dest_folder.exists():
+        if is_overwriting:
+            if is_verbose:
+                print(f"Clearing folder: {dest_folder}")
+            subprocess.run(
+                ['rm', '-r', str(dest_folder)],
+                check=True
+            )
+        else:
+            return
+    dest_folder.mkdir(parents=True, exist_ok=True)
 
     _unpack_file(curl_file, dest_folder, is_verbose)
 

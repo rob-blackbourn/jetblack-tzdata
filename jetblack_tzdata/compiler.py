@@ -17,15 +17,17 @@ def _compile_version(
     download_folder = (temp_folder / 'download' / version).resolve()
 
     output_folder = (temp_folder / 'zic' / version).resolve()
-    if not output_folder.exists():
-        output_folder.mkdir(parents=True, exist_ok=True)
-    elif is_overwriting:
-        subprocess.run(
-            ['rm', '-r', str(output_folder)],
-            check=True
-        )
-    else:
-        return
+    if output_folder.exists():
+        if is_overwriting:
+            if is_verbose:
+                print(f"Clearing folder: {output_folder}")
+            subprocess.run(
+                ['rm', '-r', str(output_folder)],
+                check=True
+            )
+        else:
+            return
+    output_folder.mkdir(parents=True, exist_ok=True)
 
     file_names = [
         'africa',

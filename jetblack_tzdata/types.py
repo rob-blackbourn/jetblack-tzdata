@@ -10,3 +10,10 @@ class TimezoneDelta(TypedDict):
     offset: timedelta
     abbr: str
     isDst: bool
+
+
+class MinTimezoneDelta(TypedDict):
+    u: int
+    o: int
+    a: str
+    d: int

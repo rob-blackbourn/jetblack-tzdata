@@ -88,15 +88,17 @@ def _dump_version(
     zic_folder = (temp_folder / "zic" / version).resolve()
     zdump_folder = (temp_folder / "zdump" / version).resolve()
 
-    if not zdump_folder.exists():
-        zdump_folder.mkdir(parents=True, exist_ok=True)
-    elif is_overwriting:
-        subprocess.run(
-            ['rm', '-r', str(zdump_folder)],
-            check=True
-        )
-    else:
-        return
+    if zdump_folder.exists():
+        if is_overwriting:
+            if is_verbose:
+                print(f"Clearing folder {zdump_folder}")
+            subprocess.run(
+                ['rm', '-r', str(zdump_folder)],
+                check=True
+            )
+        else:
+            return
+    zdump_folder.mkdir(parents=True, exist_ok=True)
 
     _dump_folder(zic_folder, zic_folder, zdump_folder, is_verbose)
 
