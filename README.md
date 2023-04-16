@@ -35,6 +35,13 @@ Note: The version in `package/package.json` must be updated manually.
 python3 -m venv .venv
 . .venv/bin/activate
 poetry install
-build-tzdata --iana-version latest --iana-version 2022a --overwrite
+build-tzdata \
+    --iana-version latest \
+    --iana-version 2022a \
+    --iana-version 2022g \
+    --iana-version 2023a \
+    --iana-version 2023b \
+    --iana-version 2023c \
+    --overwrite
 cd package && npm publish --access public.
 ```
